@@ -67,8 +67,8 @@ class Short:
         fg = Composition()
         for image, speech in self.clips:
             fg.add_scenes(make_scene(image, speech.speech, .5))
-        fg_length = fg.get_duration(None).seconds
-        bg_length = bg.get_duration(None).seconds
+        fg_length = fg.get_duration().seconds
+        bg_length = bg.get_duration().seconds
         bg.skip_to(random.randint(0, int(bg_length - fg_length))).truncated(fg_length)
         video.add_scenes(Scene(bg, fg))
         return video

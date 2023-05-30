@@ -15,7 +15,7 @@ class Track(ABC):
         self.starts_at = 0
         self.ends_after = -1
 
-    def get_duration(self, scene: Scene) -> Duration:
+    def get_duration(self, scene: Optional[Scene] = None) -> Duration:
         if self.duration is not Duration.UNDEFINED:
             return self.duration
         return self._duration_impl(scene)
