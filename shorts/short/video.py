@@ -1,11 +1,7 @@
 from __future__ import annotations
+
 from io import BytesIO
-from PIL import Image
-from moviepy.audio.io.AudioFileClip import AudioFileClip
-from moviepy.editor import ColorClip, CompositeVideoClip, ImageClip
-from moviepy.video.compositing.concatenate import concatenate_videoclips
-from numpy import array
-from .files import TemporaryFile
+
 from ..video.audio_track import AudioTrack
 from ..video.image_track import ImageTrack
 from ..video.scene import Scene
@@ -17,9 +13,8 @@ HEIGHT = 1920
 
 def make_scene(screenshot: BytesIO, audio: BytesIO, buffer: float) -> Scene:
     return Scene(
-        WIDTH, HEIGHT,
         AudioTrack(audio),
-        ImageTrack(screenshot).pos(x="center", y="center").size(width=WIDTH)
+        ImageTrack(screenshot).pos(x="center", y="center").size(width=WIDTH*.9)
     )
 
 # class RedditClip:

@@ -2,6 +2,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional, Self, TYPE_CHECKING
 from moviepy.video.VideoClip import VideoClip
+from moviepy.video.fx.resize import resize
+
 from .duration import Duration
 if TYPE_CHECKING:
     from .scene import Scene
@@ -13,7 +15,7 @@ class Track(ABC):
         self.starts_at = 0
         self.ends_after = -1
 
-    def _get_duration(self, scene: Scene) -> Duration:
+    def get_duration(self, scene: Scene) -> Duration:
         if self.duration is not Duration.UNDEFINED:
             return self.duration
         return self._duration_impl(scene)
@@ -33,7 +35,7 @@ class Track(ABC):
     def _build(self, scene: Scene) -> VideoClip:
         clip = (
             self._make_clip()
-            .set_duration(self._get_duration(scene).seconds)
+            .set_duration(self.get_duration(scene).seconds)
             .set_start(self.starts_at)
         )
         if self.ends_after >= 0:
@@ -83,7 +85,5 @@ class VisualTrack(Track, ABC):
         return self
 
     def _prepare_clip(self, clip: VideoClip) -> VideoClip:
-        return (
-            clip.set_position(self.position)
-            .resize((self.width, self.height))
-        )
+        clip = clip.set_position(self.position)
+        return resize(clip, (self.width, self.height)) if self.width > 0 and self.height > 0 else clip

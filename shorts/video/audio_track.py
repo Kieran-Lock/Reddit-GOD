@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from io import BytesIO
 
-import numpy as np
-from moviepy.audio.AudioClip import AudioArrayClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import VideoClip, ColorClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
@@ -23,4 +21,6 @@ class AudioTrack(Track):
         return Duration(self.audio.duration)
 
     def _make_clip(self) -> VideoClip:
-        return ColorClip((0, 0), color=(0, 0, 0)).set_duration(self.audio.duration).set_audio(self.audio)
+        dummy = ColorClip((1, 1), color=(0, 0, 0))
+        dummy = dummy.set_mask(ColorClip((1, 1), color=(0, 0, 0), ismask=True))
+        return dummy.set_duration(self.audio.duration).set_audio(self.audio)

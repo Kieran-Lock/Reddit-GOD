@@ -1,12 +1,12 @@
 from io import BytesIO
-from .video import Video
+from .composition import Composition
 from .audio_track import AudioTrack
 from .image_track import ImageTrack
 from .text_track import TextTrack
 from .scene import Scene
 
 
-video = Video(30, 1080, 1920, (0, 0, 0))
+video = Composition(30, 1080, 1920, (0, 0, 0))
 
 video_track = ImageTrack(BytesIO())
 audio_track = AudioTrack("audio.mp3").start_at(0.5)

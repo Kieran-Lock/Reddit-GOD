@@ -1,11 +1,15 @@
 import itertools
+import random
 from io import BytesIO
 from shorts.reddit import RedditCredentials, Subreddit
 from shorts.short.video import make_scene
 from shorts.tts import Speech, Voices
-from shorts.video.video import Video
+from shorts.video.composition import Composition
 import unicodedata
 import re
+
+from shorts.video.scene import Scene
+from shorts.video.video_track import VideoTrack
 
 
 def slugify(value, allow_unicode=False):
@@ -36,10 +40,13 @@ class ShortsBatch:
                       submissions: int):
         subreddit = Subreddit(subreddit, credentials, submissions, comments)
         for submission in subreddit.submissions:
-            yield submission.title, [(submission.post_screenshot, Speech(submission.title, narrator)),
-                                     *[(comment.screenshot, Speech(comment.content, narrator)) for comment in
-                                       submission.comments
-                                       ]]
+            try:
+                yield submission.title, [(submission.post_screenshot, Speech(submission.title, narrator)),
+                                         *[(comment.screenshot, Speech(comment.content, narrator)) for comment in
+                                           submission.comments
+                                           ]]
+            except AttributeError:
+                pass
 
     def upload(self):
         for short in self.shorts:
@@ -54,14 +61,21 @@ class Short:
         self.short = self.create_video()
         self.thumbnail = self.clips[0][0]
 
-    def create_video(self) -> Video:
-        video = Video(30, 1080, 1920, (0, 0, 0))
+    def create_video(self) -> Composition:
+        video = Composition()
+        bg = VideoTrack("background.mp4").volume(.1)
+        fg = Composition()
         for image, speech in self.clips:
-            video.add_scenes(make_scene(image, speech.speech, .5))
+            fg.add_scenes(make_scene(image, speech.speech, .5))
+        fg_length = fg.get_duration(None).seconds
+        bg_length = bg.get_duration(None).seconds
+        bg.skip_to(random.randint(0, int(bg_length - fg_length))).truncated(fg_length)
+        video.add_scenes(Scene(bg, fg))
         return video
 
     def upload(self, save_path: str) -> None:
         self.short.save(save_path)
+        print(self.title + " #reddit #funny")
         # upload(self.title, save_path, self.thumbnail)
 
     def play(self) -> None:

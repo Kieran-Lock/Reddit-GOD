@@ -1,8 +1,20 @@
+import atexit
 import itertools
+import os
 from typing import Generator
 from praw import Reddit
 from .credentials import RedditCredentials
 from .submission import RedditSubmission
+
+with open("seen.txt", "r") as f:
+    _seen_posts = set(f.read().splitlines())
+
+
+@atexit.register
+def _save_seen_posts():
+    os.remove("seen.txt")
+    with open("seen.txt", "w") as f:
+        f.write('\n'.join(_seen_posts))
 
 
 class Subreddit:
@@ -16,9 +28,10 @@ class Subreddit:
     def _get_submissions(self, limit: int,
                          maximum_comments_per_submission: int) -> Generator[RedditSubmission, None, None]:
         found = 0
-        for submission in itertools.islice(self.subreddit.hot(), 10, 100000):
-            if submission.over_18:
+        for submission in itertools.islice(self.subreddit.hot(limit=1024), 10, 100000):
+            if submission.over_18 or submission.id in _seen_posts:
                 continue
+            _seen_posts.add(submission.id)
             try:
                 if submission.author.is_suspended:
                     continue
