@@ -185,3 +185,8 @@ fabric.properties
 .idea/*
 
 *.mp4
+
+# YT
+client_secrets.json
+credentials.storage
+background.mp4
