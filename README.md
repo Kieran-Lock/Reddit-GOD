@@ -8,7 +8,7 @@
   <img src="https://yt3.googleusercontent.com/U6A3EBalyYYdPxevtxqQpdJWBCoAvw0gpI8WkkH-UWnsZUZt4kLYZ1hytYeB_h08Lki_LPpK=s176-c-k-c0x00ffffff-no-rj" alt="Logo">
   <br />
   <p align="center">
-    A Reddit-based YouTube shorts video generator
+    A simple Reddit-based YouTube shorts video generator
     <br />
     <a href="https://www.youtube.com/@theredditgod"><strong>See Reddit GOD in action »</strong></a>
     <br />
